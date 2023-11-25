@@ -1,6 +1,3 @@
-# data_visualization_jcomp
-Course-end project for CSE3020: Data Visualization
-
 # Data Visualization Course Project
 
 Welcome to the repository for the course-end project in Data Visualization! This project provides a comprehensive example of data visualization techniques learned throughout the course. The code is designed to showcase various visualization libraries and tools, allowing you to gain practical experience in creating compelling visualizations from diverse datasets.
