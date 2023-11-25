@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <title>Time Series Line Graph with Warnings</title>
+        <link rel="stylesheet" href="styles.css">
+        <style>
+          #canvas-container {
+            display: flex;
+          }
+          #value-label {
+            margin-right: 10px;
+            margin-top: 150px; /* Add margin-top to move the text down */
+            margin-left: 50px;
+          }
+          #warning-container {
+              margin-left: 400px
+          }
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D3 Node Diagram</title>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <style>
+    /* Add some styles for better visualization */
+    circle {
+      stroke: #fff;
+      stroke-width: 1.5px;
+    }
+
+    line {
+      stroke: #ccc;
+      stroke-width: 1px;
+    }
+
+    /* Add margin to the SVG container */
+    svg {
+      margin: 20px;
+    }
+
+    text {
+      font-family: 'Arial', sans-serif;
+      font-size: 10px;
+      text-anchor: middle;
+    }
+  </style>
+</head>
+<body>
+    <header>
+        <h1>Medical Pulse Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+<footer>
+    <nav>
+        <ul>
+            <li><a href="#privacy">Privacy Policy</a></li>
+            <li><a href="#terms">Terms of Service</a></li>
+        </ul>
+    </nav>
+    <!-- <p>&copy; 2023 Medical Pulse Dashboard</p> -->
+</footer>
+
+<script>
+  // Sample data
+  const data = [
+  { "condition": "Anxiety", "subgroup": "18-24", "pulse": 72 },
+  { "condition": "Stress", "subgroup": "24-30", "pulse": 85 },
+  { "condition": "Depression", "subgroup": "30-35", "pulse": 78 },
+  { "condition": "Anxiety", "subgroup": "24-30", "pulse": 68 },
+  { "condition": "Stress", "subgroup": "30-35", "pulse": 82 },
+  { "condition": "Depression", "subgroup": "18-24", "pulse": 75 },
+  { "condition": "Anxiety", "subgroup": "18-24", "pulse": 80 },
+  { "condition": "Stress", "subgroup": "24-30", "pulse": 88 },
+  { "condition": "Depression", "subgroup": "30-35", "pulse": 76 },
+  { "condition": "Anxiety", "subgroup": "18-24", "pulse": 74 },
+  { "condition": "Stress", "subgroup": "24-30", "pulse": 90 },
+  { "condition": "Depression", "subgroup": "30-35", "pulse": 82 },
+  { "condition": "Anxiety", "subgroup": "18-24", "pulse": 79 },
+  { "condition": "Stress", "subgroup": "24-30", "pulse": 86 },
+  { "condition": "Depression", "subgroup": "24-30", "pulse": 77 },
+    // Add more data points as needed
+  ];
+
+  // Calculate the maximum pulse value for scaling the SVG
+  const maxPulse = d3.max(data, d => d.pulse);
+
+  // Create the SVG container with adjusted size
+  const svg = d3.select("body").append("svg")
+    .attr("width", window.innerWidth - 40) // Adjusted width to consider the margins
+    .attr("height", window.innerHeight - 40); // Adjusted height to consider the margins
+
+  // Set up the simulation
+  const simulation = d3.forceSimulation(data)
+    .force("charge", d3.forceManyBody().strength(-50))
+    .force("center", d3.forceCenter((window.innerWidth - 40) / 2, (window.innerHeight - 40) / 2))
+    .force("collision", d3.forceCollide().radius(d => d.pulse * 0.05)); // Adjusted collision radius for smaller nodes
+
+  // Define color scale for demographic subgroup
+  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+  // Define shape scale for medical condition
+  const shapeScale = d3.scaleOrdinal()
+    .domain(["Anxiety", "Stress", "Depression"])
+    .range([d3.symbolCircle, d3.symbolSquare, d3.symbolDiamond]);
+
+  // Create the nodes
+  const nodes = svg.selectAll(".node")
+    .data(data)
+    .enter().append("g")
+    .attr("class", "node")
+    .attr("transform", d => `translate(${d.x},${d.y})`)
+    .call(d3.drag() // Add drag behavior to nodes
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended));
+
+  // Add shapes
+  nodes.append("path")
+    .attr("d", d => d3.symbol().type(shapeScale(d.condition))())
+    .attr("fill", d => colorScale(d.subgroup))
+    .attr("stroke", d => d3.color(colorScale(d.subgroup)).darker())
+    .attr("transform", d => `scale(${(d.pulse / maxPulse) * 10})`); // Adjusted the scaling factor
+
+  // Add labels for condition
+  nodes.append("text")
+    .text(d => d.condition)
+    .attr("dy", 2) // Adjust the vertical position of the label
+    .attr("fill", "black"); // Label color
+
+  // Add labels for subgroup
+  nodes.append("text")
+    .text(d => d.subgroup)
+    .attr("dy", 14) // Adjust the vertical position of the label
+    .attr("fill", "black"); // Label color
+
+  // Add labels for pulse values
+  nodes.append("text")
+    .text(d => d.pulse)
+    .attr("dy", -6) // Adjust the vertical position of the label
+    .attr("fill", "black"); // Label color
+
+  // Add tooltips
+  nodes.append("title")
+    .text(d => `Condition: ${d.condition}\nSubgroup: ${d.subgroup}\nPulse: ${d.pulse}`);
+
+  // Create the links between nodes of the same color
+  const links = [];
+  for (let i = 0; i < data.length - 1; i++) {
+    for (let j = i + 1; j < data.length; j++) {
+      if (data[i].subgroup === data[j].subgroup) {
+        links.push({ source: data[i], target: data[j] });
+      }
+    }
+  }
+
+  // Draw the links
+  const link = svg.selectAll(".link")
+    .data(links)
+    .enter().append("line")
+    .attr("class", "link")
+    .attr("stroke", d => d3.color(colorScale(d.source.subgroup)).darker());
+
+  // Tick function to update positions on each tick of the simulation
+  simulation.on("tick", () => {
+    nodes.attr("transform", d => `translate(${d.x},${d.y})`);
+
+    link
+      .attr("x1", d => d.source.x)
+      .attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x)
+      .attr("y2", d => d.target.y);
+  });
+
+  // Drag functions
+  function dragstarted(event, d) {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+
+  function dragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+  }
+
+  function dragended(event, d) {
+    if (!event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Time Series Line Graph with Warnings</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    #canvas-container {
+      display: flex;
+    }
+    #value-label {
+      margin-right: 10px;
+      margin-top: 150px; /* Add margin-top to move the text down */
+      margin-left: 50px;
+    }
+    #warning-container {
+        margin-left: 400px
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Medical Pulse Dashboard</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+
+  <div id="canvas-container">
+    <div id="value-label">Values</div>
+    <br><br>
+    <div id="visualization-container"></div>
+  </div>
+  <div id="warning-container"></div>
+
+<footer>
+    <nav>
+        <ul>
+            <li><a href="#privacy">Privacy Policy</a></li>
+            <li><a href="#terms">Terms of Service</a></li>
+        </ul>
+    </nav>
+    <!-- <p>&copy; 2023 Medical Pulse Dashboard</p> -->
+</footer>
+
+
+  <script>
+
+
+
+    // var csv_file = File('C:\Users\timothy\Downloads\dv-test\values.csv');
+    // csv_file.open('r');
+    // csv_file.encoding = 'utf-8';
+    // var data = csv_file.read().split('/\r\n|\n/'); // split by lines
+    // csv_file.close();
+    // for (var row in data) data[row].split(','); // split all lines by comas
+
+    // alert(data); // here is your 2d array
+
+
+
+    
+
+
+    const data = [6,17,20,15,6,20,6,14,2,18,4,17,1,9,19,2,16,2,19,17,1,11,15,14,2,4,20,7,9,2,1,5,2,12,9,9,7,1,3,17,16,19,10,9,2,5,8,15,2,17,6,6,11,11,6,8,17,18,3,13,4,9,17,3,7,3,13,14,4,20,4,4,16,9,12,4,3,13,10,8,15,8,15,12,6,4,4,2]
+    const points = []; // Array to store data points as (x, y) coordinates
+    const thresholdHigh = 17;
+    const thresholdLow = 3;
+    let previousValue = data[0];
+
+    function setup() {
+      createCanvas(1300, 300).parent('visualization-container');
+      frameRate(1); // Set a low frame rate for data point updates
+      textSize(14);
+    }
+
+    function draw() {
+      background(220);
+
+      // Draw X and Y axis labels and titles
+      text("Time", width / 2, height - 10);
+      text("Pulse Monitoring", width / 2, 20);
+
+      // Draw lines connecting all data points
+      for (let i = 0; i < points.length - 1; i++) {
+        line(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
+      }
+
+      // Add the latest data point to the array as (x, y) coordinates
+      const x = map(points.length, 0, data.length, 0, width);
+      const y = map(data[points.length], 0, 30, height, 0);
+      points.push({ x, y });
+
+      // Check for high risk warning
+      if (previousValue > thresholdHigh) {
+        displayWarning("Risk of Stress",previousValue);
+      } else if (previousValue < thresholdLow) {
+        displayWarning("Risk of Fatigue",previousValue);
+      } else {
+        clearWarning();
+      }
+
+      previousValue = data[points.length - 1];
+    }
+
+    function displayWarning(message,num) {
+      const warningContainer = document.getElementById("warning-container");
+      warningContainer.innerHTML = `<div class="warning">${message}-${num}</div>`;
+    }
+
+    function clearWarning() {
+      const warningContainer = document.getElementById("warning-container");
+      warningContainer.innerHTML = "";
+    }
+
+    // Start the update process
+    setTimeout(updateGraph, 5000);
+
+    function updateGraph() {
+      if (points.length < data.length) {
+        redraw(); // Trigger a redraw to update the graph
+        setTimeout(updateGraph, 5000); // Wait 5 seconds between updates
+      }
+    }
+  </script>
+  <style>
+    .warning {
+      color: red;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</body>
+</html>
