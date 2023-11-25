@@ -22,12 +22,12 @@ Welcome to the repository for the course-end project in Data Visualization! This
 <p align="center"><em>Pulse Monitoring Dashboard</em></p>
 
 <p align="center">
-  <img src="images/node.jpeg"/ width = 600>
+  <img src="images/node.jpg"/ width = 600>
 </p>
 <p align="center"><em>Node Diagram</em></p>
 
 <p align="center">
-  <img src="images/scatter.jpeg"/ width = 600>
+  <img src="images/scatter.jpg"/ width = 600>
 </p>
 <p align="center"><em>Map on Medication Dosage vs Stress Levels</em></p>
 
