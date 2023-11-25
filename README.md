@@ -2,10 +2,14 @@
 
 Welcome to the repository for the course-end project in Data Visualization! This project provides a comprehensive example of data visualization techniques learned throughout the course. The code is designed to showcase various visualization libraries and tools, allowing you to gain practical experience in creating compelling visualizations from diverse datasets.
 
+<p align="center">
+  <img src="images/timeseries.gif"/ width = 1000>
+</p>
+<p align="center"><em>Pulse Monitoring Dashboard</em></p>
+
 ## Table of Contents
 
 - [Introduction](#introduction)
-- [Screenshots](#screenshots)
 - [Features](#features)
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -13,13 +17,6 @@ Welcome to the repository for the course-end project in Data Visualization! This
 - [Libraries Used](#libraries-used)
 - [Contributing](#contributing)
 - [License](#license)
-
-## Screenshots
-
-<p align="center">
-  <img src="images/timeseries.gif"/ width = 1000>
-</p>
-<p align="center"><em>Pulse Monitoring Dashboard</em></p>
 
 
 ## Introduction
