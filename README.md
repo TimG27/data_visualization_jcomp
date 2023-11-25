@@ -93,6 +93,4 @@ If you'd like to contribute to this project, please follow these guidelines:
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE). Feel free to use the code as a reference or starting point for your own data visualization projects.
-
-Happy coding! 🚀
+This project is licensed under the [MIT License](LICENSE). Feel free to use the code as a reference or starting point for your own data visualization projects 🚀
